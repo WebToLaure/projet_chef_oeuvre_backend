@@ -22,26 +22,23 @@ export class Commentary extends BaseEntity {
    content: string;
 
     @ApiProperty()
-    @Column({
-        type:'timestamp with time zone',
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @CreateDateColumn({
+        name: "created_at",
+        type:"date"
     })
     createdAt: Date;
 
     @ApiProperty()
-    @Column({
-        type:'timestamp with time zone',
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @UpdateDateColumn({
+        name: "updated_at",
+        type:"date"
     })
     updatedAt: Date;
 
     @ApiProperty()
-    @Column({
-        type:'timestamp with time zone',
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @DeleteDateColumn({
+        name: "deleted_at",
+        type:"date"
     })
     deletedAt: Date;
 
