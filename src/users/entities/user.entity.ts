@@ -18,7 +18,6 @@ export class User extends BaseEntity {
     @ApiProperty()
     @Column({
         nullable: false
-
     })
     gender: string;
 
@@ -36,12 +35,12 @@ export class User extends BaseEntity {
     })
     email: string;
 
-
-    @ApiProperty()
     @Exclude()
+    @ApiProperty()
     @Column({
         nullable: false,
     })
+   
     password: string;
 
 
@@ -53,19 +52,17 @@ export class User extends BaseEntity {
     photo: string;
 
     @ApiProperty()
-    @Column({
-        type:'timestamp with time zone',
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @CreateDateColumn({
+       name:"created_at",
+       type:"date"
     })
     createdAt: Date;
 
 
     @ApiProperty()
-    @Column({
-        type:"timestamp with time zone",
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @UpdateDateColumn({
+        name:"updated_at",
+        type:"date"
     })
     updatedAt: Date;
 
