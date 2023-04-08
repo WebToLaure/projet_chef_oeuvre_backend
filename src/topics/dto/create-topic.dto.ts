@@ -5,6 +5,7 @@ export class CreateTopicDto {
 
     @ApiProperty()
     @IsString()
+    @IsNotEmpty()
     continent: string;
 
     @ApiProperty()
@@ -15,16 +16,10 @@ export class CreateTopicDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    visites_pays: string;
+    destinations: string;
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
     content: string;
-
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    attachFile: string;
-
 }
