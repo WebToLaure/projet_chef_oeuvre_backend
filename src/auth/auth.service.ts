@@ -33,7 +33,7 @@ export class AuthService {
 
         return {
             user:targetUser,
-            data: {access_token: this.jwtService.sign(payload),...user},
+            access_token: this.jwtService.sign(payload),
         }
     }
 
