@@ -1,8 +1,9 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn, Timestamp, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, DeleteDateColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { Role } from "src/enum/role.enum";
 import { User } from "src/users/entities/user.entity";
 import { Commentary } from "src/commentaries/entities/commentary.entity";
+import { Image} from "src/images/entities/image.entity";
 
 
 
@@ -28,12 +29,37 @@ export class Topic extends BaseEntity {
 
     @ApiProperty(/* { enum: EContinent } */)
     @Column({
-       /*  type: 'enum',
-        enum: EContinent, //["asie","amerique","europe","oceanie","antarctique","afrique"],
-        default: EContinent.EUROPE,
-        nullable: false */
+        /*  type: 'enum',
+         enum: EContinent, //["asie","amerique","europe","oceanie","antarctique","afrique"],
+         default: EContinent.EUROPE,
+         nullable: false */
     })
     continent: string/* Continent */;
+
+    @ApiProperty()
+    @Column({
+        nullable: true
+    })
+    file1: string;
+
+    @ApiProperty()
+    @Column({
+        nullable: true
+    })
+    file2: string;
+
+    @ApiProperty()
+    @Column({
+        nullable: true
+    })
+    file3: string;
+
+    @ApiProperty()
+    @Column({
+        nullable: true
+    })
+    file4: string;
+
 
     @ApiProperty()
     @Column({
@@ -46,7 +72,7 @@ export class Topic extends BaseEntity {
     @Column({
         nullable: false
     })
-    visites_pays: string;
+    destinations: string;
 
 
     @ApiProperty()
@@ -55,45 +81,36 @@ export class Topic extends BaseEntity {
     })
     content: string;
 
-    /* @ApiProperty()
-    @Column({
-        type: 'bytea',
-        nullable: false
-    })
-    attachFile?: Buffer; */ /* ou Uint8Array*/
-
+    
     @ApiProperty()
-    @Column({
-        type:'timestamp with time zone',
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @CreateDateColumn({
+        name: "created_at",
+        type:"date"
     })
     createdAt: Date;
 
 
     @ApiProperty()
-    @Column({
-        type:'timestamp with time zone',
-        precision : 3,
-        default:()=>"CURRENT_TIMESTAMP"
+    @UpdateDateColumn({
+        name: "updated_at",
+        type:"date"
     })
     updatedAt: Date;
 
     @ApiProperty()
-    @Column({
-        type:"timestamp with time zone",
-        precision : 3,
-        default:()=>""
+    @DeleteDateColumn({
+        name: "deleted_at",
+        type:"date"
     })
     deletedAt: Date;
 
     @ApiProperty()
     @Column({
-        nullable:true
+        nullable: true
     })
-    likes:number;
+    likes: number;
 
-    
+
     @ApiProperty({ type: () => Commentary })
     @OneToMany(() => Commentary, (commentary) => commentary.topic, { eager: true })
     commentaries: Commentary[]
@@ -103,4 +120,25 @@ export class Topic extends BaseEntity {
     @ManyToOne(() => User, (user) => user.topics, { nullable: false, onDelete: 'CASCADE' })
     user: User;
 
+    @ApiProperty({ type: () => Image})
+    @OneToMany(() => Image, (image) => image.topic, { eager: true })
+    images: Image[]
+
 }
+
+
+
+
+
+
+
+
+
+
+
+/* @ApiProperty()
+    @Column({
+        type: 'bytea',
+        nullable: false
+    })
+    attachFile?: Buffer; */ /* ou Uint8Array*/
