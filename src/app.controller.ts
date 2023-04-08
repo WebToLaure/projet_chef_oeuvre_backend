@@ -1,13 +1,14 @@
-import { Controller, Request, Get, Post, UseGuards } from '@nestjs/common';
+import { Controller, Request, Get, Post, UseGuards,ClassSerializerInterceptor,UseInterceptors } from '@nestjs/common';
 import { ApiTags,ApiOperation,ApiResponse } from '@nestjs/swagger';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AuthService } from './auth/auth.service';
-
+ 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) { }
-
+ 
   @ApiTags('Log In')
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: "Connexion au compte utilisateur existant" })
