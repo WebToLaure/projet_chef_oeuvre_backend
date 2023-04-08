@@ -169,7 +169,7 @@ export class TopicsController {
     }
     if (findTopic.user.id!== req.user.id ) {
 
-      throw new ForbiddenException("Vous ne pouvez pas supprimer ce topic, merci de contacter votre administarteur");
+      throw new ForbiddenException("Vous n'êtes pas autorisé à supprimer ce topic, merci de contacter votre administarteur");
     }
     const deleteTopic = await this.topicsService.deleteTopic(+id);
     
