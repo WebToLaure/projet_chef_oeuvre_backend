@@ -3,6 +3,7 @@ import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { Topic} from './entities/topic.entity';
 import { User } from 'src/users/entities/user.entity';
+import { UpdateDateColumn } from 'typeorm';
 
 @Injectable()
 
@@ -56,7 +57,10 @@ export class TopicsService {
   */
   async updateTopic(id: number, updateTopicDto: UpdateTopicDto): Promise<Topic> {
     const response = await Topic.findOneBy({ id }); // const permettant de retrouver le topic par son id
-    response.content = updateTopicDto.content; // response.content = actuel ; updateTopicDto.content = nouveau topic
+    response.continent = updateTopicDto.continent;
+    response.title= updateTopicDto.title;
+    response.destinations = updateTopicDto.destinations;
+    response.content=updateTopicDto.content;// response.content = actuel ; updateTopicDto.content = nouveau topic
     await response.save() // sauvegarde du nouveau topic
     return response;
   }
@@ -82,8 +86,8 @@ export class TopicsService {
   * @method findByTopicAndUser:
   * * Methode permettant de retourner les données d'une relation user et topic.
   */
-  async findTopicAndUser(userId: number, content: string) {
-    return await Topic.findOne({ where: { user: { id: userId }, content: content } });
+  async findTopicAndUser(userId: number, title: string) {
+    return await Topic.findOne({ where: { user: { id: userId }, title: title } });
   }
 
 }
