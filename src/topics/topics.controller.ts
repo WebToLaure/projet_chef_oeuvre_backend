@@ -1,4 +1,4 @@
-import { Controller, Request, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Controller, Request, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe, NotFoundException, ForbiddenException, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { TopicsService } from './topics.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
@@ -16,6 +16,7 @@ import { Role } from 'src/enum/role.enum';
 * * Création, Recherche via certains critères, Modifification des données , Suppression d'un topic.
 */
 @ApiTags('TOPICS')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('topics')
 export class TopicsController {
   constructor(private readonly topicsService: TopicsService,
@@ -32,15 +33,15 @@ export class TopicsController {
   @ApiResponse({ status: 201, description: 'Topic posté' })
   @Post('new')
   async createTopic(@Body() createTopicDto: CreateTopicDto, @Request() req) {
+    console.log(createTopicDto, "test");
+    const topicExists = await this.topicsService.findTopicAndUser(req.user.id, createTopicDto.continent);
 
-    const newComment = this.topicsService.createTopic(createTopicDto, req.user);
-
-    if (await this.topicsService.findTopicAndUser(req.user, createTopicDto.title)) {
+    if (topicExists) {
 
       throw new HttpException("Ce topic existe déjà.", HttpStatus.BAD_REQUEST);
     }
-    const user = await this.usersService.findUserById(req.user.id)
-    const response = await this.topicsService.createTopic(createTopicDto, user);
+
+    const response = await this.topicsService.createTopic(createTopicDto, req.user);
     return {
       statusCode: 201,
       data: response,
@@ -123,11 +124,12 @@ export class TopicsController {
   }
 
 
+
   /** Modification d'un topic
-        * @method updateTopic:
-        * * Contrôle des données sur la recherche d'un topic utilisateur.
-        * * Envoi d'un message correspondant au résultat de la requête.
-        */
+  * @method updateTopic:
+  * * Contrôle des données sur la recherche d'un topic utilisateur.
+  * * Envoi d'un message correspondant au résultat de la requête.
+  */
   @ApiBody({ type: UpdateTopicDto })
   @ApiOperation({ summary: "Modification d'un topic par son auteur" })
   @ApiResponse({ status: 200, description: 'Votre topic a bien été modifié' })
@@ -136,18 +138,19 @@ export class TopicsController {
   async updateComm(@Param('id', ParseIntPipe) id: number, @Body() updateTopicDto: UpdateTopicDto, @Request() req) {
     const topic = await this.topicsService.findTopicById(+id);
     if (!topic) {
-      throw new HttpException("Commentaire introuvable.", HttpStatus.NOT_FOUND);
+      throw new HttpException("Topic introuvable.", HttpStatus.NOT_FOUND);
     }
-    if (topic.user.id !== req.user.userId) {
-      throw new HttpException("Non autorisé.", HttpStatus.FORBIDDEN);
+    if (topic.user.id !== req.user.id) {
+      throw new HttpException("Vous n'êtes pas autorisé à modififier ce topic, merci de contacter votre administrateur.", HttpStatus.FORBIDDEN);
     }
     const response = await this.topicsService.updateTopic(id, updateTopicDto);
     return {
       statusCode: 200,
       data: response,
-      message: "Les modifications du topic ont bien été prises en compte"
+      message: `Les modifications de votre topic "${topic.destinations}"ont bien été prises en compte`
     }
   }
+
 
 
   /** Suppression d'un topic par son auteur
@@ -161,17 +164,15 @@ export class TopicsController {
   @ApiResponse({ status: 200, description: 'Topic supprimé' })
   async remove(@Param('id', ParseIntPipe) id: string, @Request() req) {
     const findTopic = await this.topicsService.findTopicById(+id);
-    if (findTopic === null) {
+    if (!findTopic) {
       throw new NotFoundException("Ce topic n'existe pas");
     }
-    if (req.user.userId !== findTopic.user.id) {
+    if (findTopic.user.id!== req.user.id ) {
 
       throw new ForbiddenException("Vous ne pouvez pas supprimer ce topic, merci de contacter votre administarteur");
     }
     const deleteTopic = await this.topicsService.deleteTopic(+id);
-    if (deleteTopic === null) {
-      throw new NotFoundException();
-    }
+    
     return {
       codeStatus: 200,
       message: `Topic n°${id} supprimé`,
