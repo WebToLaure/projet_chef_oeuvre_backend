@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
@@ -14,6 +15,9 @@ import { Commentary } from './commentaries/entities/commentary.entity';
 
 import { TopicsModule } from './topics/topics.module';
 import { Topic } from './topics/entities/topic.entity';
+
+import { ImagesModule } from './images/images.module';
+import { Image } from './images/entities/image.entity';
 
 
 @Module({
@@ -26,7 +30,7 @@ import { Topic } from './topics/entities/topic.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User,Commentary,Topic],
+      entities: [User, Commentary, Topic, Image],
       synchronize: true,
       logging: false
     }),
@@ -34,8 +38,14 @@ import { Topic } from './topics/entities/topic.entity';
     UsersModule,
     CommentariesModule,
     TopicsModule,
-    
+    ImagesModule,
+     MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: './uploads',
+      }),
+    }), 
+
   ],
   controllers: [AppController],
   providers: [AppService],
-})export class AppModule { constructor(private datasource: DataSource) { } }
+}) export class AppModule { constructor(private datasource: DataSource) { } }
