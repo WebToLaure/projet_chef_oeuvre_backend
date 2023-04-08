@@ -13,7 +13,8 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @Controller('users')  //segment dynamique qui apparaîtra dans l'URL
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
-  @ApiTags('Sign Up')
+
+  
   @Post('register')
   @ApiOperation({ summary: "Création d'un compte utilisateur" })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
