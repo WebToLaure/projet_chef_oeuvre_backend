@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Request, ClassSerializerInterceptor, UseInterceptors, BadRequestException, UseGuards, ConflictException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Request, ClassSerializerInterceptor, UseInterceptors, BadRequestException, UseGuards, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { encodePassword } from 'src/utils/bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 
 
@@ -14,7 +15,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  
+
   @Post('register')
   @ApiOperation({ summary: "Création d'un compte utilisateur" })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -48,7 +49,7 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard) //permet d'afficher tous les utilisateurs pour l'admin
+  @UseGuards(JwtAuthGuard, AdminGuard) //permet d'afficher tous les utilisateurs pour l'admin
   @Get()
   @ApiOperation({ summary: `Affichage de tous les users` })
   async findAll() {
@@ -60,6 +61,8 @@ export class UsersController {
     };
   }
 
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: `Récupération d'un user par son id` })
   async findOne(@Param('id') id: number) {
@@ -74,12 +77,13 @@ export class UsersController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+
+  @UseGuards(JwtAuthGuard,AdminGuard)
   @Patch()
   @ApiOperation({ summary: ` Modification d'un user` })
   async updateUser(@Body() updateUserDto: UpdateUserDto, @Request() req) {
 
-    const account = req.user.id
+    const account = req.user.id;
 
     const updatedUser = await this.usersService.update(account, updateUserDto);
 
@@ -87,8 +91,8 @@ export class UsersController {
       throw new HttpException('Erreur Serveur', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return {
-      statusCode: 201,
-      message: 'Modifcations prises en compte',
+      statusCode: 200,
+      message: 'Modifcation du compte utilisateur effectuée',
       data: updatedUser
     };
   }
@@ -109,7 +113,7 @@ export class UsersController {
       throw new HttpException('Erreur Serveur', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return {
-      statusCode: 201,
+      statusCode: 200,
       message: "Les modifications ont été prises en compte",
       data: updatedUser
     }
@@ -122,8 +126,8 @@ export class UsersController {
   @Delete()
   @ApiProperty()
   async removeUser(@Request() req) {
-    const account = req.user.id
 
+    const account = req.user.id
     const user = await this.usersService.findUserById(account);
     if (!user) {
       throw new HttpException(`Ce compte utilisateur n'existe pas`, HttpStatus.NOT_FOUND);
@@ -133,16 +137,16 @@ export class UsersController {
       throw new HttpException('Erreur Serveur', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return {
-      statusCode: 201,
+      statusCode: 200,
       message: "Votre demande de suppression a bien été prise en compte",
       data: deletedUser
     };
   }
 
   // Suppression d'un user par son id pour l'admin
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiOperation({ summary: `suppression d'un compte utilisateur par son id` })
   @ApiResponse({ status: 200, description: 'Compte supprimé' })
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const isUserExists = await this.usersService.findUserById(+id);
@@ -154,7 +158,7 @@ export class UsersController {
       throw new HttpException('Erreur Serveur', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return {
-      statusCode: 201,
+      statusCode: 200,
       message: 'Suppression de votre compte utilisateur',
       data: deletedUser
     }
