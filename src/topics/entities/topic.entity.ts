@@ -4,6 +4,7 @@ import { Role } from "src/enum/role.enum";
 import { User } from "src/users/entities/user.entity";
 import { Commentary } from "src/commentaries/entities/commentary.entity";
 import { Image} from "src/images/entities/image.entity";
+import { Continent } from "src/continents/entities/continent.entity";
 
 
 
@@ -34,7 +35,7 @@ export class Topic extends BaseEntity {
          default: EContinent.EUROPE,
          nullable: false */
     })
-    continent: string/* Continent */;
+    continent_name: string/* Continent */;
 
     @ApiProperty()
     @Column({
@@ -123,6 +124,10 @@ export class Topic extends BaseEntity {
     @ApiProperty({ type: () => Image})
     @OneToMany(() => Image, (image) => image.topic, { eager: true })
     images: Image[]
+
+    @ApiProperty({ type: () => Continent })
+    @ManyToOne(() => Continent, (continent) => continent.topics, { nullable: false, onDelete: 'CASCADE' })
+    continent: Continent;
 
 }
 

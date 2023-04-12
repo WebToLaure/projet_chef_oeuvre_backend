@@ -57,7 +57,7 @@ export class TopicsService {
   */
   async updateTopic(id: number, updateTopicDto: UpdateTopicDto): Promise<Topic> {
     const response = await Topic.findOneBy({ id }); // const permettant de retrouver le topic par son id
-    response.continent = updateTopicDto.continent;
+    response.continent_name = updateTopicDto.continent_name;
     response.title= updateTopicDto.title;
     response.destinations = updateTopicDto.destinations;
     response.content=updateTopicDto.content;// response.content = actuel ; updateTopicDto.content = nouveau topic

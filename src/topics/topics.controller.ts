@@ -34,7 +34,7 @@ export class TopicsController {
   @Post('new')
   async createTopic(@Body() createTopicDto: CreateTopicDto, @Request() req) {
     console.log(createTopicDto, "test");
-    const topicExists = await this.topicsService.findTopicAndUser(req.user.id, createTopicDto.continent);
+    const topicExists = await this.topicsService.findTopicAndUser(req.user.id, createTopicDto.continent_name);
 
     if (topicExists) {
 

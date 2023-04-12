@@ -6,7 +6,7 @@ export class CreateTopicDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    continent: string;
+    continent_name: string;
 
     @ApiProperty()
     @IsString()
