@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe, NotFoundException, ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe, NotFoundException, ForbiddenException, HttpException, HttpStatus, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { CommentariesService } from './commentaries.service';
 import { CreateCommentaryDto } from './dto/create-commentary.dto';
 import { UpdateCommentaryDto } from './dto/update-commentary.dto';
@@ -9,6 +9,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { Roles } from 'src/enum/roles.decorator';
 import { Role } from 'src/enum/role.enum';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 /**@class CommentariesController
 * 
@@ -17,6 +18,7 @@ import { Role } from 'src/enum/role.enum';
 * * Création, Recherche via certains critères, Modifification des données , Suppression d'un commentaire.
 */
 @ApiTags('COMMENTAIRES')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('commentaries')
 export class CommentariesController {
   constructor(private readonly commentariesService: CommentariesService,
@@ -38,16 +40,16 @@ export class CommentariesController {
     return {
       statusCode: 201,
       data: newComment,
-      message: `${newComment} a bien été ajouté`
+      message: "votre commentaire a bien été ajouté"
     }
   };
 
 
   /** 
-      * @method findAll:
-      * * Contrôle des données sur la recherche de tous les commentaires utilisateurs.
-      * * Envoi d'un message correspondant au résultat de la requête.
-      */
+    * @method findAll:
+    * * Contrôle des données sur la recherche de tous les commentaires utilisateurs.
+    * * Envoi d'un message correspondant au résultat de la requête.
+  */
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: "Recherche de l'ensemble des commentaires" })
   @ApiResponse({
@@ -70,10 +72,10 @@ export class CommentariesController {
 
   /** 
     * @method findCommByUserId:
-    * * Contrôle des données sur la recherche des commentaires par l'id de l'utilisateur( admin).
+    * * Contrôle des données sur la recherche des commentaires par l'id de l'utilisateur( ADMIN).
     * * Envoi d'un message correspondant au résultat de la requête.
-    */
-  @UseGuards(JwtAuthGuard)
+  */
+  @UseGuards(JwtAuthGuard,AdminGuard)
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: "Recherche de l'ensemble des commentaires d'un user" })
   @ApiResponse({ status: 200, description: 'Voici les commentaires de ${user.pseudo}' })
@@ -83,6 +85,7 @@ export class CommentariesController {
     if (response === null) {
       throw new HttpException("aucun commentaire trouvé", HttpStatus.NOT_FOUND);
     }
+    const data = await this.commentariesService.findAll();
     return {
       message: `Voici les commentaires du user n°${id}`,
       data: response,
@@ -127,7 +130,7 @@ export class CommentariesController {
     if (!commentary) {
       throw new HttpException("Commentaire introuvable.", HttpStatus.NOT_FOUND);
     }
-    if (commentary.user.id !== req.user.userId) {
+    if (commentary.user.id !== req.user.id) {
       throw new HttpException("Non autorisé.", HttpStatus.FORBIDDEN);
     }
     const response = await this.commentariesService.updateCommentary(id, updateCommentaryDto);

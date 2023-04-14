@@ -97,7 +97,8 @@ export class CommentariesService {
 
     const response = await Commentary.findOneBy({ id }); // const permettant de retrouver le commentaire par son id
 
-    response.content = updateCommentaryDto.content; // response.content = actuel ; updateCommentaryDto.content = nouveau commentaire
+    response.content = updateCommentaryDto.content;
+    response.topic = updateCommentaryDto.topic; // response.content = actuel ; updateCommentaryDto.content = nouveau commentaire
 
     await response.save() // sauvegarde du nouveau commentaire 
 
