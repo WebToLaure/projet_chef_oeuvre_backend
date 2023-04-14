@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpException, HttpStatus, ParseIntPipe,Request, NotFoundException } from '@nestjs/common';
 import { ContinentsService } from './continents.service';
 import { CreateContinentDto } from './dto/create-continent.dto';
 import { UpdateContinentDto } from './dto/update-continent.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { ApiBody, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminGuard } from 'src/auth/admin.guard';
-
+@ApiTags('CONTINENTS')
 @Controller('continents')
 export class ContinentsController {
   constructor(private readonly continentsService: ContinentsService) { }
@@ -14,10 +14,10 @@ export class ContinentsController {
   @ApiBody({ type: CreateContinentDto })
   @ApiOperation({ summary: "Ajout d'un Continent" })
   @ApiResponse({ status: 201, description: 'Continent ajouté' })
-  @Post('new')
-  async createContinent(@Body() createContinentDto: CreateContinentDto, id: number) {
-    console.log(createContinentDto, "test");
-    const continentExists = await this.continentsService.findContinentById(+id);
+  @Post()
+  async createContinent(@Body() createContinentDto: CreateContinentDto) {
+
+    const continentExists = await this.continentsService.findContinentByName(createContinentDto.continent);
     if (continentExists) {
       throw new HttpException("Ce continent a déjà été ajouté.", HttpStatus.BAD_REQUEST);
     }
@@ -28,7 +28,6 @@ export class ContinentsController {
       message: "Le continent a bien été ajouté"
     }
   }
-
 
   /** 
     * @method findAll:
@@ -75,5 +74,26 @@ export class ContinentsController {
     }
   }
 
-
+/** Suppression d'un topic par son auteur
+   * @method remove:
+   * * Contrôle des données sur la suppression d'un topic utilisateur.
+   * * Envoi d'un message correspondant au résultat envoyé par la BDD, de la requête utilisateur
+   */
+@UseGuards(JwtAuthGuard,AdminGuard)
+@Delete(':id')
+@ApiOperation({ summary: "Suppression d'un continent" })
+@ApiResponse({ status: 200, description: 'Continent supprimé' })
+async remove(@Param('id', ParseIntPipe) id: string, @Request() req) {
+  const findContinent = await this.continentsService.findContinentById(+id);
+  if (!findContinent) {
+    throw new NotFoundException("Ce continent n'existe pas");
+  }
+  const deleteContinent = await this.continentsService.deleteContinent(+id);
+  
+  return {
+    codeStatus: 200,
+    message: `Continent n°${id} supprimé`,
+    data: deleteContinent,
+  };
+}
 }

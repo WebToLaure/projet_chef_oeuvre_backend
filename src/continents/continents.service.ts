@@ -45,4 +45,27 @@ export class ContinentsService {
   }
 
 
+  /** 
+  * @method deleteContinent :
+  * * Methode permettant de supprimer un continent.
+  */
+  async deleteContinent(id: number) {
+    const deletedContinent = await Continent.findOneBy({ id });
+    deletedContinent.remove();
+    if (deletedContinent) {
+      return deletedContinent
+    }
+    return undefined
+  }
+
+
+
+
+  async findContinentByName(continent: string): Promise<Continent> {
+    const response = await Continent.findOneBy({ continent: continent })
+    if (!response) {
+      return undefined
+    }
+    return response;
+  }
 }

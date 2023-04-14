@@ -20,7 +20,7 @@ import { Role } from 'src/enum/role.enum';
 @Controller('commentaries')
 export class CommentariesController {
   constructor(private readonly commentariesService: CommentariesService,
-    ) { }
+  ) { }
 
   /** Création d'un commentaire
     * @method create:

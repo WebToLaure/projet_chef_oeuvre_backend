@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Topic } from "src/topics/entities/topic.entity";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-Entity('continents')
+@Entity('continents')
 export class Continent extends BaseEntity {
 
     @ApiProperty()
