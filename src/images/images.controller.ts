@@ -33,16 +33,24 @@ export class ImagesController {
     fileFilter: fileFilter,
   }))
 
-  async uploadFile(@UploadedFile() file: Express.Multer.File) { //@Body()createImageDto :CreateImageDto,
+  async uploadFile(@Body() @UploadedFile() file: Express.Multer.File) { //@Body()createImageDto :CreateImageDto,
     console.log(file);
+    this.imagesService.create({
+    file:file.filename
+    
+    })
 
     return {
       statusCode: 201,
       data: file,
       message: "Votre photo a bien été ajoutée"
     };
+
+
   }
 
+
+ 
 
   @Get(':imgpath')
   seeUploadedFile(@Param('imgpath') image, @Res() res) {

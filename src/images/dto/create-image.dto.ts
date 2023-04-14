@@ -4,9 +4,8 @@ import { IsString, IsNotEmpty, IsEmail,} from "class-validator";
 
 export class CreateImageDto {
 
-
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    fieldName: string;
+    file: string;
 }

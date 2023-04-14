@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
+import { Image } from './entities/image.entity';
 
 @Injectable()
 export class ImagesService {
-  create(createImageDto: CreateImageDto) {
-    return 'This action adds a new image';
+  async create(createImageDto:CreateImageDto) {
+    const response = Image.create({...createImageDto});
+    return await response.save();
   }
 
   findAll() {
