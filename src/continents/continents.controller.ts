@@ -10,6 +10,13 @@ import { AdminGuard } from 'src/auth/admin.guard';
 export class ContinentsController {
   constructor(private readonly continentsService: ContinentsService) { }
 
+
+
+  /** Création d'un continent
+    * @method createContinent:
+    * * Contrôle des données sur la création  d'un continent.
+    * * Envoi d'un message correspondant au résultat de la requête.
+  */
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBody({ type: CreateContinentDto })
   @ApiOperation({ summary: "Ajout d'un Continent" })
@@ -29,7 +36,9 @@ export class ContinentsController {
     }
   }
 
-  /** 
+
+
+    /** 
     * @method findAll:
     * * Contrôle des données sur la recherche des continents existants en BDD.
     * * Envoi d'un message correspondant au résultat de la requête.
@@ -53,6 +62,8 @@ export class ContinentsController {
     }
   }
 
+
+
   /** 
   * @method findContinentById:
   * * Contrôle des données sur la recherche d'un continent par son id .
@@ -62,7 +73,7 @@ export class ContinentsController {
   @Get(':id')
   @ApiOperation({ summary: "Recherche d'un continent par id" })
   @ApiResponse({ status: 200, description: 'Continent correspondant' })
-  async findTopicById(@Param('id', ParseIntPipe) id: number) {
+  async findContinentById(@Param('id', ParseIntPipe) id: number) {
     const response = await this.continentsService.findContinentById(id);
     if (!response) {
       throw new HttpException("Aucun continent trouvé", HttpStatus.NOT_FOUND);
@@ -74,10 +85,34 @@ export class ContinentsController {
     }
   }
 
-/** Suppression d'un topic par son auteur
+
+
+  /** Modification d'un continent
+  * @method updateContinent:
+  * * Contrôle des données sur la recherche d'un continent.
+  * * Envoi d'un message correspondant au résultat de la requête.
+  */
+  @ApiBody({ type: UpdateContinentDto })
+  @ApiOperation({summary:"Modifier le nom d'un continent (ADMIN)"})
+  @ApiResponse({status:200, description:'nom du continent modifié'})
+  @UseGuards(JwtAuthGuard,AdminGuard)
+  @Patch(':id')
+  async updateContinent(@Param('id', ParseIntPipe) id: number, @Body() updateContinentDto: UpdateContinentDto, @Request() req){
+    const response = await this.continentsService.updateContinent(id,updateContinentDto);
+    return{
+      statusCode: 200,
+      data: response,
+      message: `La modification de nom du continent ${id} a bien été prise en compte`
+      
+    }
+  }
+
+
+
+  /** Suppression d'un continent.
    * @method remove:
-   * * Contrôle des données sur la suppression d'un topic utilisateur.
-   * * Envoi d'un message correspondant au résultat envoyé par la BDD, de la requête utilisateur
+   * * Contrôle des données sur la suppression d'un continent.
+   * * Envoi d'un message correspondant au résultat envoyé par la BDD, de la requête ADMIN
    */
 @UseGuards(JwtAuthGuard,AdminGuard)
 @Delete(':id')

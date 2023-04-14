@@ -45,27 +45,37 @@ export class ContinentsService {
   }
 
 
+  async updateContinent(id: number, updateContinentDto: UpdateContinentDto): Promise<Continent> {
+    const response = await Continent.findOneBy({ id })
+    response.continent = updateContinentDto.continent;
+    await response.save();
+    return response;
+
+  }
+
+  
+
   /** 
   * @method deleteContinent :
   * * Methode permettant de supprimer un continent.
   */
   async deleteContinent(id: number) {
-    const deletedContinent = await Continent.findOneBy({ id });
-    deletedContinent.remove();
-    if (deletedContinent) {
-      return deletedContinent
-    }
+  const deletedContinent = await Continent.findOneBy({ id });
+  deletedContinent.remove();
+  if (deletedContinent) {
+    return deletedContinent
+  }
+  return undefined
+}
+
+
+
+
+  async findContinentByName(continent: string): Promise < Continent > {
+  const response = await Continent.findOneBy({ continent: continent })
+    if(!response) {
     return undefined
   }
-
-
-
-
-  async findContinentByName(continent: string): Promise<Continent> {
-    const response = await Continent.findOneBy({ continent: continent })
-    if (!response) {
-      return undefined
-    }
     return response;
-  }
+}
 }
