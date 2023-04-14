@@ -7,6 +7,8 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UsersService } from 'src/users/users.service';
 import { Roles } from 'src/enum/roles.decorator';
 import { Role } from 'src/enum/role.enum';
+import { ContinentsService } from 'src/continents/continents.service';
+import { Continent } from 'src/continents/entities/continent.entity';
 
 
 /**@class TopicsController
@@ -20,7 +22,8 @@ import { Role } from 'src/enum/role.enum';
 @Controller('topics')
 export class TopicsController {
   constructor(private readonly topicsService: TopicsService,
-    private readonly usersService: UsersService) { }
+    private readonly usersService: UsersService,
+    private readonly continentsService: ContinentsService) { }
 
   /** Création d'un topic
     * @method createTopic:
@@ -34,13 +37,10 @@ export class TopicsController {
   @Post('new')
   async createTopic(@Body() createTopicDto: CreateTopicDto, @Request() req) {
     console.log(createTopicDto, "test");
-    const topicExists = await this.topicsService.findTopicAndUser(req.user.id, createTopicDto.continent_name);
-
+    const topicExists = await this.topicsService.findTopicAndUser(req.user.id,createTopicDto.title);
     if (topicExists) {
-
       throw new HttpException("Ce topic existe déjà.", HttpStatus.BAD_REQUEST);
     }
-
     const response = await this.topicsService.createTopic(createTopicDto, req.user);
     return {
       statusCode: 201,
@@ -102,6 +102,7 @@ export class TopicsController {
   }
 
 
+  
   /** 
   * @method findTopicById:
   * * Contrôle des données sur la recherche d'un topic par son id .
@@ -147,7 +148,7 @@ export class TopicsController {
     return {
       statusCode: 200,
       data: response,
-      message: `Les modifications de votre topic "${topic.destinations}"ont bien été prises en compte`
+      message: `Les modifications de votre topic ${topic.destinations} ont bien été prises en compte`
     }
   }
 
@@ -167,12 +168,12 @@ export class TopicsController {
     if (!findTopic) {
       throw new NotFoundException("Ce topic n'existe pas");
     }
-    if (findTopic.user.id!== req.user.id ) {
+    if (findTopic.user.id !== req.user.id) {
 
       throw new ForbiddenException("Vous n'êtes pas autorisé à supprimer ce topic, merci de contacter votre administarteur");
     }
     const deleteTopic = await this.topicsService.deleteTopic(+id);
-    
+
     return {
       codeStatus: 200,
       message: `Topic n°${id} supprimé`,

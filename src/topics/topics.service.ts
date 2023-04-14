@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
-import { Topic} from './entities/topic.entity';
+import { Topic } from './entities/topic.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateDateColumn } from 'typeorm';
+import { Continent } from 'src/continents/entities/continent.entity';
 
 @Injectable()
 
@@ -20,7 +21,7 @@ export class TopicsService {
  * Method permettant de créer une topic suivant le modèle du CreateTopicDto.
  */
   async createTopic(createTopicDto: CreateTopicDto, user: User) {
-    const response = Topic.create({ ...createTopicDto})
+    const response = Topic.create({ ...createTopicDto, /*continent: { id: createTopicDto.continentId }  */})
     delete user.password;
     response.user = user;
     return await response.save();
@@ -36,7 +37,6 @@ export class TopicsService {
   }
 
 
-
   /** 
   * @method findTopicById :
   * * Methode permettant de rechercher un topic par SON id .
@@ -50,17 +50,16 @@ export class TopicsService {
   }
 
 
-
   /** 
   * @method updateTopic :
   * * Methode permettant de modifier un topic par son auteur.
   */
   async updateTopic(id: number, updateTopicDto: UpdateTopicDto): Promise<Topic> {
     const response = await Topic.findOneBy({ id }); // const permettant de retrouver le topic par son id
-    response.continent_name = updateTopicDto.continent_name;
-    response.title= updateTopicDto.title;
+    response.continent=updateTopicDto.continent;
+    response.title = updateTopicDto.title;
     response.destinations = updateTopicDto.destinations;
-    response.content=updateTopicDto.content;// response.content = actuel ; updateTopicDto.content = nouveau topic
+    response.content = updateTopicDto.content;// response.content = actuel ; updateTopicDto.content = nouveau topic
     await response.save() // sauvegarde du nouveau topic
     return response;
   }
@@ -72,9 +71,9 @@ export class TopicsService {
   * * Methode permettant de supprimer un topic par son auteur.
   */
   async deleteTopic(id: number) {
-    const deletedTopic = await Topic.findOneBy({id});
+    const deletedTopic = await Topic.findOneBy({ id });
     deletedTopic.remove();
-    if (deletedTopic){
+    if (deletedTopic) {
       return deletedTopic
     }
     return undefined
@@ -90,4 +89,8 @@ export class TopicsService {
     return await Topic.findOne({ where: { user: { id: userId }, title: title } });
   }
 
+
+  async findTopicAndContinent(continentId: number, title: string) {
+    return await Topic.findOne({ where: { continent: { id: continentId }, title: title } })
+  }
 }

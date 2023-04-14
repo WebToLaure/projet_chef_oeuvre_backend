@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Role } from "src/enum/role.enum";
 import { User } from "src/users/entities/user.entity";
 import { Commentary } from "src/commentaries/entities/commentary.entity";
-import { Image} from "src/images/entities/image.entity";
+import { Image } from "src/images/entities/image.entity";
 import { Continent } from "src/continents/entities/continent.entity";
 
 
@@ -28,39 +28,6 @@ export class Topic extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiProperty(/* { enum: EContinent } */)
-    @Column({
-        /*  type: 'enum',
-         enum: EContinent, //["asie","amerique","europe","oceanie","antarctique","afrique"],
-         default: EContinent.EUROPE,
-         nullable: false */
-    })
-    continent_name: string/* Continent */;
-
-    @ApiProperty()
-    @Column({
-        nullable: true
-    })
-    file1: string;
-
-    @ApiProperty()
-    @Column({
-        nullable: true
-    })
-    file2: string;
-
-    @ApiProperty()
-    @Column({
-        nullable: true
-    })
-    file3: string;
-
-    @ApiProperty()
-    @Column({
-        nullable: true
-    })
-    file4: string;
-
 
     @ApiProperty()
     @Column({
@@ -68,13 +35,11 @@ export class Topic extends BaseEntity {
     })
     title: string;
 
-
     @ApiProperty()
     @Column({
         nullable: false
     })
     destinations: string;
-
 
     @ApiProperty()
     @Column({
@@ -82,34 +47,27 @@ export class Topic extends BaseEntity {
     })
     content: string;
 
-    
+
     @ApiProperty()
     @CreateDateColumn({
         name: "created_at",
-        type:"date"
+        type: "date"
     })
     createdAt: Date;
-
 
     @ApiProperty()
     @UpdateDateColumn({
         name: "updated_at",
-        type:"date"
+        type: "date"
     })
     updatedAt: Date;
 
     @ApiProperty()
     @DeleteDateColumn({
         name: "deleted_at",
-        type:"date"
+        type: "date"
     })
     deletedAt: Date;
-
-    @ApiProperty()
-    @Column({
-        nullable: true
-    })
-    likes: number;
 
 
     @ApiProperty({ type: () => Commentary })
@@ -121,14 +79,13 @@ export class Topic extends BaseEntity {
     @ManyToOne(() => User, (user) => user.topics, { nullable: false, onDelete: 'CASCADE' })
     user: User;
 
-    @ApiProperty({ type: () => Image})
+    @ApiProperty({ type: () => Image })
     @OneToMany(() => Image, (image) => image.topic, { eager: true })
     images: Image[]
 
     @ApiProperty({ type: () => Continent })
     @ManyToOne(() => Continent, (continent) => continent.topics, { nullable: false, onDelete: 'CASCADE' })
     continent: Continent;
-
 }
 
 
