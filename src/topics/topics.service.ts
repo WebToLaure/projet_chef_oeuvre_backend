@@ -9,17 +9,17 @@ import { Continent } from 'src/continents/entities/continent.entity';
 @Injectable()
 
 /**@class TopicsService
- * 
- * * Méthodes liées aux requêtes client. Fournisseur du controleur
- * * Méthode permettant de recevoir les données de la source de données,appliquer la logique métier et renvoyer la réponse au controleur.
- * * Création de topics, Recherche via des critères, Modifification des données, Suppression d'un topic.
- */
+  * 
+  * * Méthodes liées aux requêtes client. Fournisseur du controleur
+  * * Méthode permettant de recevoir les données de la source de données,appliquer la logique métier et renvoyer la réponse au controleur.
+  * * Création de topics, Recherche via des critères, Modifification des données, Suppression d'un topic.
+  */
 export class TopicsService {
 
-  /*  * 
- * @method createTopic :
- * Method permettant de créer une topic suivant le modèle du CreateTopicDto.
- */
+  /** 
+  * @method createTopic :
+  * Method permettant de créer une topic suivant le modèle du CreateTopicDto.
+  */
   async createTopic(createTopicDto: CreateTopicDto, user: User) {
     const response = Topic.create({ ...createTopicDto, /*continent: { id: createTopicDto.continentId }  */})
     delete user.password;
@@ -29,9 +29,9 @@ export class TopicsService {
 
 
   /** 
-    * @method findAll:
-    * * Methode permettant de rechercher TOUS les topics (role admin).
-    */
+  * @method findAll:
+  * * Methode permettant de rechercher TOUS les topics (role admin).
+  */
   async findAll(): Promise<Topic[]> {
     return await Topic.find();
   }

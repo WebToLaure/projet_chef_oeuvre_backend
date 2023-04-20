@@ -36,7 +36,6 @@ export class TopicsController {
   @ApiResponse({ status: 201, description: 'Topic posté' })
   @Post('new')
   async createTopic(@Body() createTopicDto: CreateTopicDto, @Request() req) {
-    console.log(createTopicDto, "test");
     const topicExists = await this.topicsService.findTopicAndUser(req.user.id,createTopicDto.title);
     if (topicExists) {
       throw new HttpException("Ce topic existe déjà.", HttpStatus.BAD_REQUEST);
@@ -102,7 +101,7 @@ export class TopicsController {
   }
 
 
-  
+
   /** 
   * @method findTopicById:
   * * Contrôle des données sur la recherche d'un topic par son id .
