@@ -1,12 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
+import { Continent } from "src/continents/entities/continent.entity";
 
 export class CreateTopicDto {
 
     @ApiProperty()
-    @IsString()
+    @IsObject()
     @IsNotEmpty()
-    continent_name: string;
+    continent: Continent;
 
     @ApiProperty()
     @IsString()
@@ -18,8 +19,10 @@ export class CreateTopicDto {
     @IsNotEmpty()
     destinations: string;
 
-    @ApiProperty()
+
     @IsString()
     @IsNotEmpty()
     content: string;
+
+
 }
