@@ -43,7 +43,6 @@ export class ContinentsController {
     * * Contrôle des données sur la recherche des continents existants en BDD.
     * * Envoi d'un message correspondant au résultat de la requête.
     */
-  @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiOperation({ summary: "Recherche de l'ensemble des continents" })
   @ApiResponse({
     status: 200,
@@ -69,7 +68,6 @@ export class ContinentsController {
   * * Contrôle des données sur la recherche d'un continent par son id .
   * * Envoi d'un message correspondant au résultat de la requête.
   */
-  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get(':id')
   @ApiOperation({ summary: "Recherche d'un continent par id" })
   @ApiResponse({ status: 200, description: 'Continent correspondant' })
