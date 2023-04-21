@@ -37,7 +37,7 @@ export class ContinentsService {
  * * Methode permettant de rechercher un continent par SON id .
  */
   async findContinentById(id: number) {
-    const response = await Continent.findBy({ id })
+    const response = await Continent.findOneBy({ id })
     if (!response) {
       return undefined;
     }
