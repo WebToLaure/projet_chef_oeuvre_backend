@@ -86,14 +86,12 @@ export class TopicsController {
   @ApiOperation({ summary: "Recherche de l'ensemble des topics d'un user" })
   @ApiResponse({ status: 200, description: 'Voici les topics de ${user.pseudo}' })
   @Get('user/:id')
-  async findCommByUserId(@Param('id') id: string, @Request() req) {
+  async findTopicByUserId(@Param('id') id: string, @Request() req) {
     const response = await this.usersService.findUserById(+id);
     if (!response) {
       throw new HttpException("cet utilisateur n'existe pas", HttpStatus.NOT_FOUND);
     }
-
     const TopicAndUser = await this.topicsService.findAll();
-
     return {
       message: `Voici les topics du user n°${id}`,
       data: TopicAndUser,

@@ -32,7 +32,7 @@ export class TopicsService {
   * @method findAll:
   * * Methode permettant de rechercher TOUS les topics (role admin).
   */
-  async findAll(): Promise<Topic[]> {
+  async findAll(): Promise<Topic[] |undefined> {
     return await Topic.find();
   }
 
