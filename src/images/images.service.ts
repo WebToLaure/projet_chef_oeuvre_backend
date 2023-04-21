@@ -2,27 +2,58 @@ import { Injectable } from '@nestjs/common';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { Image } from './entities/image.entity';
+import { Topic } from 'src/topics/entities/topic.entity';
 
 @Injectable()
 export class ImagesService {
-  async create(createImageDto:CreateImageDto) {
-    const response = Image.create({...createImageDto});
+  async create(createImageDto: CreateImageDto) {
+    const response = Image.create({ ...createImageDto });
+   /*  const newPhoto = new Image(); */
     return await response.save();
   }
 
-  findAll() {
-    return `This action returns all images`;
+
+  /*  async create(
+     createPhotoDto: CreateImageDto,file: Express.Multer.File): Promise<Image | undefined> {
+     const response = await Image.create({...createImageDto});
+     const newPhoto = new Image();
+     newPhoto.file = file.filename;
+     newPhoto.originalName = file.originalname;
+     newPhoto.mimeType = file.mimetype;
+     await Image.save(newPhoto);
+     return newPhoto;
+   } */
+  async findAll(): Promise<Image[] | undefined> {
+    const allPhoto = await Image.find();
+    return allPhoto;
+  }
+  async findImageById(id: number): Promise<Image[] | undefined> {
+    const onePhoto = await Image.find({ where: { id: id } });
+    return onePhoto;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} image`;
+  /** 
+  * @method updateImage :
+  * * Methode permettant de modifier une photo.
+  */
+  async updateImage(id: number, updateImageDto: UpdateImageDto): Promise<Image> {
+    const response = await Image.findOneBy({ id }); // const permettant de retrouver la photo par son id
+    response.file = updateImageDto.file;
+    await response.save() // sauvegarde de la nouvelle photo
+    return response;
   }
 
-  update(id: number, updateImageDto: UpdateImageDto) {
-    return `This action updates a #${id} image`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} image`;
+  /** 
+  * @method deleteImage :
+  * * Methode permettant de supprimer une image de son topic.
+  */
+  async remove(id: number) {
+    const deletedImage = await Image.findOneBy({ id });
+    deletedImage.remove();
+    if (deletedImage) {
+      return deletedImage
+    }
+    return undefined
   }
 }
