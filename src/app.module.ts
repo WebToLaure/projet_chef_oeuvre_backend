@@ -18,6 +18,7 @@ import { Topic } from './topics/entities/topic.entity';
 
 import { ImagesModule } from './images/images.module';
 import { Image } from './images/entities/image.entity';
+
 import { ContinentsModule } from './continents/continents.module';
 import { Continent } from './continents/entities/continent.entity';
 
@@ -33,7 +34,7 @@ import { Continent } from './continents/entities/continent.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Commentary, Topic, Image,Continent],
+      entities: [User, Commentary, Topic, Image, Continent],
       autoLoadEntities: true,
       synchronize: true,
       logging: false
