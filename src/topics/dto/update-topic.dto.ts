@@ -1,15 +1,15 @@
 import { PartialType,ApiProperty } from '@nestjs/swagger';
 import { CreateTopicDto } from './create-topic.dto';
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsObject, IsString } from 'class-validator';
 import { Continent } from 'src/continents/entities/continent.entity';
 
 export class UpdateTopicDto extends PartialType(CreateTopicDto) {
 
     
     @ApiProperty()
-    @IsObject()
+    @IsNumber()
     @IsNotEmpty()
-    continent: Continent;
+    continentId: number;
 
     @ApiProperty()
     @IsString()
