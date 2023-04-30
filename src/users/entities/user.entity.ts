@@ -39,8 +39,8 @@ export class User extends BaseEntity {
     @ApiProperty()
     @Column({
         nullable: false,
+       
     })
-   
     password: string;
 
 
