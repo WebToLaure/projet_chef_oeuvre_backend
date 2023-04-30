@@ -84,7 +84,7 @@ export class Topic extends BaseEntity {
     images: Image[]
 
     @ApiProperty({ type: () => Continent })
-    @ManyToOne(() => Continent, (continent) => continent.topics, { nullable: false, onDelete: 'CASCADE' })
+    @ManyToOne(() => Continent, (continent) => continent.topics, { onDelete: 'CASCADE' })
     continent: Continent;
 }
 

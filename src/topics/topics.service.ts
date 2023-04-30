@@ -20,11 +20,13 @@ export class TopicsService {
   * @method createTopic :
   * Method permettant de créer une topic suivant le modèle du CreateTopicDto.
   */
-  async createTopic(createTopicDto: CreateTopicDto, user: User) {
-    const response = Topic.create({ ...createTopicDto, /*continent: { id: createTopicDto.continentId }  */})
+  async createTopic(createTopicDto: CreateTopicDto, user: User, continent: Continent): Promise<Topic> {
+    const newTopic = Topic.create({ ...createTopicDto })
     delete user.password;
-    response.user = user;
-    return await response.save();
+    newTopic.user = user;
+    newTopic.continent = continent;
+    await newTopic.save()
+    return newTopic;
   }
 
 
@@ -32,7 +34,7 @@ export class TopicsService {
   * @method findAll:
   * * Methode permettant de rechercher TOUS les topics (role admin).
   */
-  async findAll(): Promise<Topic[] |undefined> {
+  async findAll(): Promise<Topic[] | undefined> {
     return await Topic.find();
   }
 
@@ -54,9 +56,9 @@ export class TopicsService {
   * @method updateTopic :
   * * Methode permettant de modifier un topic par son auteur.
   */
-  async updateTopic(id: number, updateTopicDto: UpdateTopicDto): Promise<Topic> {
+  async updateTopic(id: number, updateTopicDto: UpdateTopicDto, user:User, continent:Continent): Promise<Topic> {
     const response = await Topic.findOneBy({ id }); // const permettant de retrouver le topic par son id
-    response.continent=updateTopicDto.continent;
+    response.continent = continent;
     response.title = updateTopicDto.title;
     response.destinations = updateTopicDto.destinations;
     response.content = updateTopicDto.content;// response.content = actuel ; updateTopicDto.content = nouveau topic

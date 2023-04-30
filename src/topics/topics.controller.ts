@@ -35,12 +35,21 @@ export class TopicsController {
   @ApiOperation({ summary: "Ajout d'un Topic " })
   @ApiResponse({ status: 201, description: 'Topic posté' })
   @Post('new')
-  async createTopic(@Body() createTopicDto: CreateTopicDto, @Request() req) {
+  async createTopic(@Body()createTopicDto: CreateTopicDto, @Request() req) {
+
+    const user = req.user;
+    if (!user) {
+      throw new HttpException("L'utilisateur n'existe pas", HttpStatus.NOT_FOUND);
+    }
+    const continent= await this.continentsService.findContinentById(createTopicDto.continentId);
+    if(!continent){
+      throw new HttpException("Ce continent n'existe pas.", HttpStatus.BAD_REQUEST);
+    }
     const topicExists = await this.topicsService.findTopicAndUser(req.user.id,createTopicDto.title);
     if (topicExists) {
       throw new HttpException("Ce topic existe déjà.", HttpStatus.BAD_REQUEST);
     }
-    const response = await this.topicsService.createTopic(createTopicDto, req.user);
+    const response = await this.topicsService.createTopic(createTopicDto,user,continent);
     return {
       statusCode: 201,
       data: response,
@@ -105,7 +114,6 @@ export class TopicsController {
   * * Contrôle des données sur la recherche d'un topic par son id .
   * * Envoi d'un message correspondant au résultat de la requête.
   */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: "Recherche d'un topic par id" })
   @ApiResponse({ status: 200, description: 'Votre topic a été trouvé' })
@@ -134,14 +142,19 @@ export class TopicsController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateComm(@Param('id', ParseIntPipe) id: number, @Body() updateTopicDto: UpdateTopicDto, @Request() req) {
+    const user = req.user.id;
     const topic = await this.topicsService.findTopicById(+id);
     if (!topic) {
       throw new HttpException("Topic introuvable.", HttpStatus.NOT_FOUND);
     }
-    if (topic.user.id !== req.user.id) {
+    else if (topic.user.id !== user) {
       throw new HttpException("Vous n'êtes pas autorisé à modififier ce topic, merci de contacter votre administrateur.", HttpStatus.FORBIDDEN);
     }
-    const response = await this.topicsService.updateTopic(id, updateTopicDto);
+    const continent= await this.continentsService.findContinentById(updateTopicDto.continentId);
+    if(!continent){
+      throw new HttpException("Ce continent n'existe pas.", HttpStatus.BAD_REQUEST);
+    }
+    const response = await this.topicsService.updateTopic(id,updateTopicDto,user,continent);
     return {
       statusCode: 200,
       data: response,

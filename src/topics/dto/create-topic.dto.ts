@@ -5,9 +5,8 @@ import { Continent } from "src/continents/entities/continent.entity";
 export class CreateTopicDto {
 
     @ApiProperty()
-    @IsObject()
-    @IsNotEmpty()
-    continent: Continent;
+    @IsNumber()
+    continentId: number;
 
     @ApiProperty()
     @IsString()
