@@ -4,6 +4,7 @@ import { UpdateCommentaryDto } from './dto/update-commentary.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Commentary } from './entities/commentary.entity';
 import { IsNull } from 'typeorm';
+import { Topic } from 'src/topics/entities/topic.entity';
 
 @Injectable()
 
@@ -15,15 +16,17 @@ import { IsNull } from 'typeorm';
  */
 export class CommentariesService {
 
-   /** 
- * @method create :
- * Method permettant de créer un commentaire suivant le modèle du CreatCommentaryDto.
- */
-  async create(createCommentaryDto: CreateCommentaryDto, user: User) {
-    const response = Commentary.create({ ...createCommentaryDto })
+  /** 
+* @method create :
+* Method permettant de créer un commentaire suivant le modèle du CreatCommentaryDto.
+*/
+  async createCommentary(createCommentaryDto: CreateCommentaryDto, user: User, topic: Topic): Promise<Commentary> {
+    const newCommentary = Commentary.create({ ...createCommentaryDto })
     delete user.password;
-    response.user = user;
-    return await response.save();
+    newCommentary.user = user;
+    newCommentary.topic = topic;
+    await newCommentary.save()
+    return newCommentary;
   }
 
 
@@ -93,17 +96,14 @@ export class CommentariesService {
   * @method updateCommentary :
   * * Methode permettant de modifier un commentaire par son auteur.
   */
-  async updateCommentary(id: number, updateCommentaryDto: UpdateCommentaryDto): Promise<Commentary> {
+  async updateCommentary(id: number, updateCommentaryDto: UpdateCommentaryDto, user: User, topic: Topic): Promise<Commentary> {
 
     const response = await Commentary.findOneBy({ id }); // const permettant de retrouver le commentaire par son id
 
     response.content = updateCommentaryDto.content;
-    response.topic = updateCommentaryDto.topic; // response.content = actuel ; updateCommentaryDto.content = nouveau commentaire
-
+    response.topic = topic; // response.content = actuel ; updateCommentaryDto.content = nouveau commentaire
     await response.save() // sauvegarde du nouveau commentaire 
-
     return response;
-
   }
 
 

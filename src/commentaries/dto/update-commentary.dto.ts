@@ -1,10 +1,15 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateCommentaryDto } from './create-commentary.dto';
-import { IsNotEmpty, IsObject, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsObject, IsString, Length } from 'class-validator';
 import { Topic } from 'src/topics/entities/topic.entity';
 import { UpdateDateColumn } from 'typeorm';
 
 export class UpdateCommentaryDto extends PartialType(CreateCommentaryDto) {
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    topicId: number
 
     @ApiProperty()
     @IsString()
@@ -12,8 +17,4 @@ export class UpdateCommentaryDto extends PartialType(CreateCommentaryDto) {
     @Length(1, 5000)
     content: string;
     
-    @ApiProperty()
-    @IsObject()
-    @IsNotEmpty()
-    topic: Topic
 }

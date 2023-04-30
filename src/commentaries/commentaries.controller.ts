@@ -22,7 +22,8 @@ import { AdminGuard } from 'src/auth/admin.guard';
 @Controller('commentaries')
 export class CommentariesController {
   constructor(private readonly commentariesService: CommentariesService,
-  ) { }
+              private readonly topicsService: TopicsService,
+              private readonly usersService: UsersService) { }
 
   /** Création d'un commentaire
     * @method create:
@@ -36,7 +37,19 @@ export class CommentariesController {
   @Post()
 
   async create(@Body() createCommentaryDto: CreateCommentaryDto, @Request() req) {
-    const newComment = this.commentariesService.create(createCommentaryDto, req.user);
+    const user = req.user;
+    if (!user) {
+      throw new HttpException("L'utilisateur n'existe pas", HttpStatus.NOT_FOUND);
+    }
+    const topic= await this.topicsService.findTopicById(createCommentaryDto.topicId);
+    if(!topic){
+      throw new HttpException("Ce topic n'existe pas.", HttpStatus.BAD_REQUEST);
+    }
+    const commentExists = await this.commentariesService.findCommentaryAndUser(req.user.id,createCommentaryDto.content);
+    if (commentExists) {
+      throw new HttpException("Ce commentaire existe déjà.", HttpStatus.BAD_REQUEST);
+    }
+    const newComment = this.commentariesService.createCommentary(createCommentaryDto,user,topic);
     return {
       statusCode: 201,
       data: newComment,
@@ -75,7 +88,7 @@ export class CommentariesController {
     * * Contrôle des données sur la recherche des commentaires par l'id de l'utilisateur( ADMIN).
     * * Envoi d'un message correspondant au résultat de la requête.
   */
-  @UseGuards(JwtAuthGuard,AdminGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: "Recherche de l'ensemble des commentaires d'un user" })
   @ApiResponse({ status: 200, description: 'Voici les commentaires de ${user.pseudo}' })
@@ -126,14 +139,19 @@ export class CommentariesController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateComm(@Param('id', ParseIntPipe) id: number, @Body() updateCommentaryDto: UpdateCommentaryDto, @Request() req) {
+    const user = req.user.id;
     const commentary = await this.commentariesService.findCommentById(+id);
     if (!commentary) {
       throw new HttpException("Commentaire introuvable.", HttpStatus.NOT_FOUND);
     }
-    if (commentary.user.id !== req.user.id) {
-      throw new HttpException("Non autorisé.", HttpStatus.FORBIDDEN);
+    else if (commentary.user.id !== user) {
+      throw new HttpException("Vous n'êtes pas autorisé à modifier ce commentaire, veuillez contacter votre administrateur", HttpStatus.FORBIDDEN);
     }
-    const response = await this.commentariesService.updateCommentary(id, updateCommentaryDto);
+    const topic= await this.topicsService.findTopicById(updateCommentaryDto.topicId);
+    if(!topic){
+      throw new HttpException("Ce topic n'existe pas.", HttpStatus.BAD_REQUEST);
+    }
+    const response = await this.commentariesService.updateCommentary(id, updateCommentaryDto,user,topic);
     return {
       statusCode: 200,
       data: response,

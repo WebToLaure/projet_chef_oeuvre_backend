@@ -8,16 +8,14 @@ import { UpdateDateColumn } from "typeorm";
 
 export class CreateCommentaryDto {
 
+    @ApiProperty()
+    @IsNumber()
+    topicId: number;
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
     @Length(1, 5000)
     content: string;
-
-    @ApiProperty()
-    @IsObject()
-    @IsNotEmpty()
-    topic: Topic
 
 }
