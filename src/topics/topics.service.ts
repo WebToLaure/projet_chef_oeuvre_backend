@@ -3,7 +3,6 @@ import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { Topic } from './entities/topic.entity';
 import { User } from 'src/users/entities/user.entity';
-import { UpdateDateColumn } from 'typeorm';
 import { Continent } from 'src/continents/entities/continent.entity';
 
 @Injectable()
