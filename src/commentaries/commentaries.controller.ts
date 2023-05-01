@@ -55,7 +55,7 @@ export class CommentariesController {
       data: newComment,
       message: "votre commentaire a bien été ajouté"
     }
-  };
+  }
 
 
   /** 
@@ -101,7 +101,7 @@ export class CommentariesController {
     const data = await this.commentariesService.findAll();
     return {
       message: `Voici les commentaires du user n°${id}`,
-      data: response,
+      data: data,
     };
   }
 
@@ -174,7 +174,7 @@ export class CommentariesController {
     if (findComment === null) {
       throw new NotFoundException("Ce commentaire n'existe pas");
     }
-    if (req.user.userId !== findComment.user.id) {
+    if (req.user.id !== findComment.user.id) {
 
       throw new ForbiddenException("Vous ne pouvez pas supprimer ce commentaire, merci de contacter votre administarteur");
     }
