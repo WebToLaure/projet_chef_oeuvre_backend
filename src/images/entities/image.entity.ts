@@ -14,6 +14,12 @@ export class Image extends BaseEntity {
     @Column({
         nullable: true
     })
+    originalName: string;
+
+    @ApiProperty()
+    @Column({
+        nullable: true
+    })
     file: string;
 
     @ApiProperty({ type: () => Topic })

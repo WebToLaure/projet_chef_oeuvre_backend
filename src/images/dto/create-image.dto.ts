@@ -3,9 +3,12 @@ import { IsString, IsNotEmpty, IsEmail,} from "class-validator";
 
 
 export class CreateImageDto {
-
-    @ApiProperty()
+    /* @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    file: string;
+    originalName: string; */
+
+   /*  @ApiProperty()
+    @IsNotEmpty()
+    file: string; */
 }

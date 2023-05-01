@@ -6,10 +6,17 @@ import { Topic } from 'src/topics/entities/topic.entity';
 
 @Injectable()
 export class ImagesService {
-  async create(createImageDto: CreateImageDto) {
-    const response = Image.create({ ...createImageDto });
-   /*  const newPhoto = new Image(); */
-    return await response.save();
+  async create(topicBelonging: Topic, file: Express.Multer.File) {
+    console.log(file);
+    
+    //const response = new Image() //Image.create({ ...createImageDto });
+    const addNewImage = new Image();
+    addNewImage.file = file.filename;
+    addNewImage.originalName = file.originalname;
+    addNewImage.topic = topicBelonging;
+    //response.topic = topicBelonging;
+    await addNewImage.save();
+    return addNewImage;
   }
 
 
@@ -36,12 +43,12 @@ export class ImagesService {
   * @method updateImage :
   * * Methode permettant de modifier une photo.
   */
-  async updateImage(id: number, updateImageDto: UpdateImageDto): Promise<Image> {
-    const response = await Image.findOneBy({ id }); // const permettant de retrouver la photo par son id
+  //async updateImage(id: number, updateImageDto: UpdateImageDto) //: Promise<Image> {
+    /* const response = await Image.findOneBy({ id }); // const permettant de retrouver la photo par son id
     response.file = updateImageDto.file;
     await response.save() // sauvegarde de la nouvelle photo
-    return response;
-  }
+    return response; */
+  //}
 
 
   /** 
