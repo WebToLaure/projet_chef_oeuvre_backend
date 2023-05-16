@@ -44,11 +44,11 @@ export class ImagesService {
   * * Methode permettant de modifier une photo.
   */
   //async updateImage(id: number, updateImageDto: UpdateImageDto) //: Promise<Image> {
-    /* const response = await Image.findOneBy({ id }); // const permettant de retrouver la photo par son id
-    response.file = updateImageDto.file;
-    await response.save() // sauvegarde de la nouvelle photo
-    return response; */
-  //}
+    // const response = await Image.findOneBy({ id }); // const permettant de retrouver la photo par son id
+   // response.file = updateImageDto.file;
+   // await response.save() // sauvegarde de la nouvelle photo
+   // return response; 
+  
 
 
   /** 

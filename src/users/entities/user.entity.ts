@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany, Timestamp, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Exclude } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
 import { Role } from "src/enum/role.enum";
@@ -42,14 +42,6 @@ export class User extends BaseEntity {
        
     })
     password: string;
-
-
-    @ApiProperty()
-    @Column({
-        nullable: true,
-        type: "bytea",
-    })
-    photo: string;
 
     @ApiProperty()
     @CreateDateColumn({

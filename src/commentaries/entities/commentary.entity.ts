@@ -13,40 +13,41 @@ export class Commentary extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+
     @ApiProperty()
     @Column({
-        type:'varchar',
+        type: 'varchar',
         nullable: false
     })
+    content: string;
 
-   content: string;
-
+   
     @ApiProperty()
     @CreateDateColumn({
         name: "created_at",
-        type:"date"
+        type: "date"
     })
     createdAt: Date;
 
     @ApiProperty()
     @UpdateDateColumn({
         name: "updated_at",
-        type:"date"
+        type: "date"
     })
     updatedAt: Date;
 
     @ApiProperty()
     @DeleteDateColumn({
         name: "deleted_at",
-        type:"date"
+        type: "date"
     })
     deletedAt: Date;
 
     @ApiProperty({ type: () => User })
-    @ManyToOne(() => User, (user) => user.commentaries, { nullable: false, onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.commentaries, {nullable: false, onDelete: 'CASCADE' })
     user: User;
 
-    @ApiProperty({ type: () => Topic})
+    @ApiProperty({ type: () => Topic })
     @ManyToOne(() => Topic, (topic) => topic.commentaries, { nullable: false, onDelete: 'CASCADE' })
     topic: Topic;
 

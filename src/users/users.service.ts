@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
  * * **update**           : permet de modifier un user de la BDD par son id
  * * **remove**           : permet de supprimer un user de la BDD par son id */
 @Injectable()
-//Class permettant la gestion des requètes SQL pour les compétences
+//Class permettant la gestion des requètes SQL 
 export class UsersService {
 
 // Trouver un user dans la BDD par son email
@@ -23,6 +23,7 @@ async findUserByEmail(email: string){
 
   return await User.findOneBy({ email });
 }
+//return await User.findOne({ where:{email},relations:{topics:{continent:true}},select:{topics:{continent:{id:true,continent:true}}} });
 
 //Trouver un user par son pseudo
 async findByPseudo(pseudo:string){

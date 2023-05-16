@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateCommentaryDto } from './dto/create-commentary.dto';
 import { UpdateCommentaryDto } from './dto/update-commentary.dto';
 import { Commentary } from './entities/commentary.entity';
-
 import { User } from 'src/users/entities/user.entity';
 import { IsNull } from 'typeorm';
 import { Topic } from 'src/topics/entities/topic.entity';
@@ -97,12 +96,13 @@ export class CommentariesService {
   * @method updateCommentary :
   * * Methode permettant de modifier un commentaire par son auteur.
   */
-  async updateCommentary(id: number, updateCommentaryDto: UpdateCommentaryDto, user: User, topic: Topic): Promise<Commentary> {
+  async updateCommentary(id: number, updateCommentaryDto: UpdateCommentaryDto, user: User): Promise<Commentary> {
 
     const response = await Commentary.findOneBy({ id }); // const permettant de retrouver le commentaire par son id
+console.log(response);
 
     response.content = updateCommentaryDto.content;
-    response.topic = topic; // response.content = actuel ; updateCommentaryDto.content = nouveau commentaire
+    //response.topic = topic; // response.content = actuel ; updateCommentaryDto.content = nouveau commentaire
     await response.save() // sauvegarde du nouveau commentaire 
     return response;
   }

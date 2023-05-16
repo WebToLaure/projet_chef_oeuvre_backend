@@ -10,8 +10,7 @@ import { UsersService } from 'src/users/users.service';
 import { AdminGuard } from './admin.guard';
 
 import { UserGuard } from './user.guard';
-import { TopicsService } from 'src/topics/topics.service';
-import { CommentariesService } from 'src/commentaries/commentaries.service';
+
 
 
 @Module({

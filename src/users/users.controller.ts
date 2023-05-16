@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Request, ClassSerializerInterceptor, UseInterceptors, BadRequestException, UseGuards, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Request, ClassSerializerInterceptor, UseInterceptors, BadRequestException, UseGuards, ConflictException, NotFoundException} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { encodePassword } from 'src/utils/bcrypt';
@@ -80,7 +80,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard,AdminGuard)
   @Patch()
-  @ApiOperation({ summary: ` Modification d'un user` })
+  @ApiOperation({ summary: ` Modification d'un user (ADMIN)` })
   async updateUser(@Body() updateUserDto: UpdateUserDto, @Request() req) {
 
     const account = req.user.id;

@@ -70,7 +70,7 @@ export class ImagesController {
       throw new NotFoundException('aucune photo encore enregistrée')
     }
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Voici vos photos',
       data: AllImages
     }
@@ -102,7 +102,7 @@ export class ImagesController {
       throw new NotFoundException("La photo recherchée n'existe pas.");
     }
     return {
-      status: 200,
+      statusCode: 200,
       message: 'Voici le résultat de votre recherche',
       data: response,
     };
@@ -121,7 +121,7 @@ export class ImagesController {
     }
     //const response = await this.imagesService.updateImage(id, updateImageDto);
     return {
-      status: 200,
+      statusCode: 200,
       message: 'La modification de votre photo a bien été prise en compte',
       //data: response,
     };
@@ -140,7 +140,7 @@ export class ImagesController {
     }
     const photoDel = await this.imagesService.remove(id);
     return {
-      status: 200,
+      statusCode: 200,
       message: `Votre photo a bien été supprimée`,
       data: response,
     };

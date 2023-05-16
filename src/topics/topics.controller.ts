@@ -8,7 +8,6 @@ import { UsersService } from 'src/users/users.service';
 import { Roles } from 'src/enum/roles.decorator';
 import { Role } from 'src/enum/role.enum';
 import { ContinentsService } from 'src/continents/continents.service';
-import { Continent } from 'src/continents/entities/continent.entity';
 
 
 /**@class TopicsController
@@ -64,7 +63,7 @@ export class TopicsController {
      * * Contrôle des données sur la recherche de tous les topics utilisateurs.
      * * Envoi d'un message correspondant au résultat de la requête.
      */
-  @UseGuards(JwtAuthGuard)
+/*   @UseGuards(JwtAuthGuard) */
   @ApiOperation({ summary: "Recherche de l'ensemble des topics" })
   @ApiResponse({
     status: 200,
@@ -102,8 +101,9 @@ export class TopicsController {
     }
     const TopicAndUser = await this.topicsService.findAll();
     return {
-      message: `Voici les topics du user n°${id}`,
+      statusCode:200,
       data: TopicAndUser,
+      message: `Voici les topics du user n°${id}`,
     };
   }
 

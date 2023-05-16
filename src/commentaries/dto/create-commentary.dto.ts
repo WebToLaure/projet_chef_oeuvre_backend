@@ -1,16 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsNumber, Length, IsInt, IsObject } from "class-validator";
-import { Commentary } from "../entities/commentary.entity";
-import { Topic } from "src/topics/entities/topic.entity";
-import { UpdateDateColumn } from "typeorm";
-
+import { IsString, IsNotEmpty,Length} from "class-validator";
 
 
 export class CreateCommentaryDto {
 
     @ApiProperty()
-    @IsNumber()
-    topicId: number;
+    @IsString()
+    @IsNotEmpty()
+    topicId: string; // sert à récupérer le topic number pour commenter un topic, le topic number arrive en string
 
     @ApiProperty()
     @IsString()

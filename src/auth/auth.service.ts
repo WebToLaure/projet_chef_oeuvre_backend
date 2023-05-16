@@ -15,12 +15,12 @@ export class AuthService {
     async validateUser(email: string, password: string): Promise<any> {
         const user = await this.usersService.findUserByEmail(email);
 
-        if (user === null){
+        if (user === null) {
             throw new NotFoundException("cet email n'exite pas")
         }
-        const encodePassword = await bcrypt.compare(password, user.password)//comparer password hashe avec celui du user
-        
-        if (user && encodePassword) {// remplacer user.password avec le nom de la const de hashage
+        const encodePassword = await bcrypt.compare(password, user.password)//compare password hashe avec celui du user
+
+        if (user && encodePassword) {// remplace user.password avec le nom de la const de hashage
             const { password, ...result } = user;
             return result;
         }
@@ -32,7 +32,7 @@ export class AuthService {
         const payload = { email: targetUser.email, sub: targetUser.id };
 
         return {
-            user:targetUser,
+            user: targetUser,
             access_token: this.jwtService.sign(payload),
         }
     }

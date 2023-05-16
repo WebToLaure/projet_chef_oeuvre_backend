@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
-import { Continent } from "src/continents/entities/continent.entity";
+import {IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateTopicDto {
 

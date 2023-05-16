@@ -6,7 +6,6 @@ import { TopicsService } from 'src/topics/topics.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entities/user.entity';
 import { Roles } from 'src/enum/roles.decorator';
 import { Role } from 'src/enum/role.enum';
 import { AdminGuard } from 'src/auth/admin.guard';
@@ -41,15 +40,20 @@ export class CommentariesController {
     if (!user) {
       throw new HttpException("L'utilisateur n'existe pas", HttpStatus.NOT_FOUND);
     }
-    const topic= await this.topicsService.findTopicById(createCommentaryDto.topicId);
+    const topic= await this.topicsService.findTopicById(+createCommentaryDto.topicId);
+    console.log(topic);
+    
     if(!topic){
       throw new HttpException("Ce topic n'existe pas.", HttpStatus.BAD_REQUEST);
+    }
+    else if(topic.user.id === req.user.id){
+      throw new HttpException("Vous ne pouvez pas commenter votre propre topic", HttpStatus.FORBIDDEN);
     }
     const commentExists = await this.commentariesService.findCommentaryAndUser(req.user.id,createCommentaryDto.content);
     if (commentExists) {
       throw new HttpException("Ce commentaire existe déjà.", HttpStatus.BAD_REQUEST);
     }
-    const newComment = this.commentariesService.createCommentary(createCommentaryDto,user,topic);
+    const newComment = await this.commentariesService.createCommentary(createCommentaryDto,user,topic);
     return {
       statusCode: 201,
       data: newComment,
@@ -139,6 +143,8 @@ export class CommentariesController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateComm(@Param('id', ParseIntPipe) id: number, @Body() updateCommentaryDto: UpdateCommentaryDto, @Request() req) {
+    console.log(id,updateCommentaryDto);
+    
     const user = req.user.id;
     const commentary = await this.commentariesService.findCommentById(+id);
     if (!commentary) {
@@ -147,11 +153,11 @@ export class CommentariesController {
     else if (commentary.user.id !== user) {
       throw new HttpException("Vous n'êtes pas autorisé à modifier ce commentaire, veuillez contacter votre administrateur", HttpStatus.FORBIDDEN);
     }
-    const topic= await this.topicsService.findTopicById(updateCommentaryDto.topicId);
+    /* const topic= await this.topicsService.findTopicById(+updateCommentaryDto.topicId);
     if(!topic){
       throw new HttpException("Ce topic n'existe pas.", HttpStatus.BAD_REQUEST);
-    }
-    const response = await this.commentariesService.updateCommentary(id, updateCommentaryDto,user,topic);
+    } */
+    const response = await this.commentariesService.updateCommentary(id, updateCommentaryDto,user);
     return {
       statusCode: 200,
       data: response,
@@ -170,11 +176,14 @@ export class CommentariesController {
   @ApiOperation({ summary: "Suppression d'un commentaire par son auteur" })
   @ApiResponse({ status: 200, description: 'Commentaire supprimé' })
   async remove(@Param('id', ParseIntPipe) id: string, @Request() req) {
-    const findComment = await this.commentariesService.findOne(+id);
+    const user = req.user.id;
+
+    const findComment = await this.commentariesService.findCommentById(+id);
+
     if (findComment === null) {
       throw new NotFoundException("Ce commentaire n'existe pas");
     }
-    if (req.user.id !== findComment.user.id) {
+    if (user !== findComment.user.id) {
 
       throw new ForbiddenException("Vous ne pouvez pas supprimer ce commentaire, merci de contacter votre administarteur");
     }
@@ -183,7 +192,7 @@ export class CommentariesController {
       throw new NotFoundException();
     }
     return {
-      codeStatus: 200,
+      statusCode: 200,
       message: `Commentaire n°${id} supprimé`,
       data: deleteComment,
     };

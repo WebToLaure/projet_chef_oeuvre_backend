@@ -1,6 +1,5 @@
 import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne, DeleteDateColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { Role } from "src/enum/role.enum";
 import { User } from "src/users/entities/user.entity";
 import { Commentary } from "src/commentaries/entities/commentary.entity";
 import { Image } from "src/images/entities/image.entity";
